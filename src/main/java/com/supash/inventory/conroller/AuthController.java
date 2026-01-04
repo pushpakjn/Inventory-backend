@@ -46,7 +46,7 @@ public class AuthController {
 		// ✅ 4. Create HttpOnly cookie
 		ResponseCookie cookie = ResponseCookie.from("jwt", token).httpOnly(true).secure(true) // ⚠️ TRUE in PROD
 																								// (HTTPS)
-				.path("/").sameSite("None").maxAge(24 * 60 * 60).build();
+				.path("/").sameSite("Lax").maxAge(24 * 60 * 60).build();
 
 		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 		System.out.println("login");
