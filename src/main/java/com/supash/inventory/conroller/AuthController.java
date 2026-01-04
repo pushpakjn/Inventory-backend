@@ -7,6 +7,8 @@ import com.supash.inventory.utils.JwtUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Map;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 @RestController
@@ -44,9 +47,13 @@ public class AuthController {
 		String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
 
 		// ✅ 4. Create HttpOnly cookie
-		ResponseCookie cookie = ResponseCookie.from("jwt", token).httpOnly(true).secure(false) // ⚠️ TRUE in PROD
-																								// (HTTPS)
-				.path("/").sameSite("Lax").maxAge(24 * 60 * 60).build();
+		ResponseCookie cookie = ResponseCookie.from("jwt", token)
+	            .httpOnly(true)
+	            .secure(true)              
+	            .sameSite("None")          
+	            .path("/")
+	            .maxAge(60 * 60 * 24)      
+	            .build();
 
 		response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 		System.out.println("login");
@@ -58,15 +65,22 @@ public class AuthController {
 	    if (authentication == null || !authentication.isAuthenticated()) {
 	        return ResponseEntity.status(401).body("Not authenticated");
 	    }
-	    return ResponseEntity.ok(authentication.getPrincipal());
+
+	    UserDetails user = (UserDetails) authentication.getPrincipal();
+
+	    return ResponseEntity.ok(Map.of(
+	        "username", user.getUsername(),
+	        "roles", user.getAuthorities()
+	    ));
 	}
+
 
 	
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 	    ResponseCookie cookie = ResponseCookie.from("jwt", "")
 	            .httpOnly(true)
-	            .secure(false) // true in prod
+	            .secure(true) // true in prod
 	            .path("/")
 	            .maxAge(0)
 	            .build();
