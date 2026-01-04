@@ -43,30 +43,13 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-//	@Bean
-//	public CorsConfigurationSource corsConfigurationSource(@Value("${frontend.url}") String frontendUrl) {
-//		CorsConfiguration config = new CorsConfiguration();
-//
-//		config.setAllowCredentials(true);
-//		config.setAllowedOrigins(List.of(frontendUrl));
-//		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//		config.setAllowedHeaders(List.of("*"));
-////		config.setExposedHeaders(List.of("Authorization"));
-//		config.setExposedHeaders(List.of("Set-Cookie"));
-//		config.setMaxAge(3600L);
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", config);
-//		return source;
-//	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration config = new CorsConfiguration();
 
 	    config.setAllowCredentials(true);
 	    config.setAllowedOriginPatterns(List.of(
-	        "https://supashinv.vercel.app",
-	        "https://*.vercel.app",
-	        "http://localhost:5173"
+	        "https://supashinv.vercel.app"
 	    ));
 	    config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
 	    config.setAllowedHeaders(List.of("*"));
